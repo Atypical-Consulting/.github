@@ -1,0 +1,6 @@
+{
+  "name": "Node.js CI",
+  "description": "Standard CI workflow for Node.js/TypeScript projects",
+  "iconName": "nodejs",
+  "categories": ["continuous-integration"]
+}
