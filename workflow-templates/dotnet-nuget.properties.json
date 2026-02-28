@@ -1,0 +1,6 @@
+{
+  "name": ".NET NuGet Publish",
+  "description": "Build, test, pack and publish .NET packages to NuGet.org on tag push",
+  "iconName": "dotnet",
+  "categories": ["continuous-integration", "deployment"]
+}

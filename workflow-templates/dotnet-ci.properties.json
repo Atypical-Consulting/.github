@@ -1,0 +1,6 @@
+{
+  "name": ".NET CI",
+  "description": "Standard CI workflow for .NET projects: restore, build, test",
+  "iconName": "dotnet",
+  "categories": ["continuous-integration"]
+}
