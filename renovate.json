@@ -1,1 +1,30 @@
-{"$schema":"https://docs.renovatebot.com/renovate-schema.json","extends":["config:recommended"]}
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "group:allNonMajor",
+    ":automergePatch",
+    ":automergeMinor",
+    "schedule:weekly"
+  ],
+  "labels": ["dependencies"],
+  "packageRules": [
+    {
+      "matchManagers": ["github-actions"],
+      "groupName": "GitHub Actions",
+      "automerge": true
+    },
+    {
+      "matchManagers": ["nuget"],
+      "groupName": "NuGet packages"
+    },
+    {
+      "matchManagers": ["npm"],
+      "groupName": "npm packages"
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    }
+  ]
+}
