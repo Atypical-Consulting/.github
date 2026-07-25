@@ -1,6 +1,6 @@
 {
   "name": ".NET NuGet Publish",
-  "description": "Build, test, pack and publish .NET packages to NuGet.org on tag push",
+  "description": "Build, test, pack and publish .NET packages to NuGet.org on tag push, via Trusted Publishing (OIDC — no long-lived API key)",
   "iconName": "dotnet",
   "categories": ["continuous-integration", "deployment"]
 }
