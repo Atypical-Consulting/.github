@@ -7,7 +7,10 @@ on:
         type: string
         default: '10.0.x'
     secrets:
-      NUGET_API_KEY:
+      # The nuget.org profile name, not a credential — publication is authorized by the OIDC
+      # exchange below, against a Trusted Publishing policy registered on nuget.org for this
+      # repository and workflow. There is deliberately no long-lived API key input.
+      NUGET_USER:
         required: true
 
 env:
@@ -17,6 +20,12 @@ env:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    # A reusable workflow can never hold more permission than the workflow calling it, so the
+    # CALLER must also declare `permissions: id-token: write` — declaring it here alone is not
+    # enough and the login step below will fail with a missing-token error.
+    permissions:
+      contents: read
+      id-token: write # request the GitHub OIDC token for NuGet Trusted Publishing
     steps:
       - uses: actions/checkout@v6
         with:
@@ -33,5 +42,13 @@ jobs:
         run: dotnet test --no-build --configuration Release --verbosity normal
       - name: Pack
         run: dotnet pack --no-build --configuration Release --output ./artifacts
+      # Exchanges the GitHub OIDC token for a NuGet API key valid ~1 hour, so nothing long-lived is
+      # stored anywhere. Keep this step adjacent to the push: the key expires, and a slow job that
+      # logs in early and pushes late will fail on an expired credential.
+      - name: NuGet login (OIDC -> short-lived key)
+        id: login
+        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
+        with:
+          user: ${{ secrets.NUGET_USER }}
       - name: Push to NuGet
-        run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+        run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
